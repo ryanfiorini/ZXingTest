@@ -22,7 +22,10 @@ namespace ZXingTest.Droid
 	{
 		int count = 1;
         ImageView _imageView;
+        
         // This is a test QR!
+
+        MobileBarcodeScanner scanner;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -33,6 +36,9 @@ namespace ZXingTest.Droid
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
+
+            //Create a new instance of our Scanner
+            scanner = new MobileBarcodeScanner();
 
             // Get our button from the layout resource,
             // and attach an event to it
@@ -50,7 +56,7 @@ namespace ZXingTest.Droid
                 //Bitmap bitmapToDisplay = await BitmapFactory.DecodeResourceAsync(Resources, Resource.Drawable.download1);
                 //_imageView.SetImageBitmap(bitmapToDisplay);
                 _imageView.SetImageBitmap(
-                    decodeSampledBitmapFromResource(Resources, Resource.Drawable.download1, 200, 200));
+                    decodeSampledBitmapFromResource(Resources, Resource.Drawable.qrcode, 375, 375));
             };
 
 
@@ -66,7 +72,7 @@ namespace ZXingTest.Droid
 
             //};
 
-            buttonScan.Click += async delegate
+            buttonScan.Click += delegate
             {
                 //var fullName = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "download.png");
 
@@ -85,9 +91,14 @@ namespace ZXingTest.Droid
 
 
                 // The result will be null because InJustDecodeBounds == true.
-                Bitmap bitmap = await BitmapFactory.DecodeResourceAsync(Resources, Resource.Drawable.download1, options);
-                var imageHeight = options.OutHeight; // (int)bitmap.GetBitmapInfo().Height;
-                var imageWidth = options.OutWidth;  // (int)bitmap.GetBitmapInfo().Width;
+                //Bitmap bitmap = await BitmapFactory.DecodeResourceAsync(Resources, Resource.Drawable.download1, options);
+                Bitmap bitmap = decodeSampledBitmapFromResource(Resources, Resource.Drawable.qrcode, 375, 375);
+
+
+               // var imageHeight = options.OutHeight; 
+                //var imageWidth = options.OutWidth;  
+                var imageHeight = (int)bitmap.GetBitmapInfo().Height;
+                var imageWidth = (int)bitmap.GetBitmapInfo().Width;
 
                 //using (var stream = new MemoryStream())
                 //{
@@ -105,10 +116,10 @@ namespace ZXingTest.Droid
 
                 var barcodeReader = new BarcodeReader();
                 barcodeReader.Options.TryHarder = true;
-                barcodeReader.Options.ReturnCodabarStartEnd = true;
-                barcodeReader.Options.PureBarcode = true;
-                barcodeReader.Options.PossibleFormats = new List<BarcodeFormat>();
-                barcodeReader.Options.PossibleFormats.Add(BarcodeFormat.QR_CODE);
+                //barcodeReader.Options.ReturnCodabarStartEnd = true;
+                //barcodeReader.Options.PureBarcode = true;
+                //barcodeReader.Options.PossibleFormats = new List<BarcodeFormat>();
+                //barcodeReader.Options.PossibleFormats.Add(BarcodeFormat.QR_CODE);
                 ZXing.Result result = barcodeReader.Decode(source);
                 var result2 = barcodeReader.DecodeMultiple(source);
 
@@ -143,20 +154,32 @@ namespace ZXingTest.Droid
 
 
             Button buttonScan2 = FindViewById<Button>(Resource.Id.buttonScan2);
-            buttonScan2.Click += delegate
+            buttonScan2.Click += async delegate
             {
-                //var uimg = UIImage.FromFile("Images/" + "download1.png");
+                //Tell our scanner to activiyt use the default overlay
+                scanner.UseCustomOverlay = false;
 
-                //var barcodeReader = new BarcodeReader(null, (brimg) => {
+                //We can customize the top and bottom text of the default overlay
+                scanner.TopText = "Hold the camera up to the barcode\nAbout 6 inches away";
+                scanner.BottomText = "Wait for the barcode to automatically scan!";
 
-                //    return new RGBLuminanceSource(uimg);
+                //Start scanning
+                var result = await scanner.Scan();
 
-                //}, null, null); //(p, w, h, f) => new RGBLuminanceSource(p, w, h, RGBLuminanceSource.BitmapFormat.Unknown));
-
-                //var r = barcodeReader.Decode(uimg);
-
-
+                // Handler for the result returned by the scanner.
+                HandleScanResult(result);
             };
+        }
+
+        void HandleScanResult(ZXing.Result result)
+        {
+            string msg = "";
+
+            if (result != null && !string.IsNullOrEmpty(result.Text))
+                msg = "Found Barcode: " + result.Text;
+            else
+                msg = "Scanning Canceled!";
+
         }
 
         public Bitmap decodeSampledBitmapFromResource(Android.Content.Res.Resources res, int resId,

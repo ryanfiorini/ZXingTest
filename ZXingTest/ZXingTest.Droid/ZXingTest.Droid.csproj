@@ -96,8 +96,14 @@
     <AndroidResource Include="Resources\drawable-xhdpi\download1.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\download1.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\download1.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\qrcode.jpg" />
+    <AndroidResource Include="Resources\drawable-mdpi\qrcode.jpg" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\qrcode.jpg" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\qrcode.jpg" />
+    <AndroidResource Include="Resources\drawable-xhdpi\qrcode.jpg" />
     <Content Include="Resources\drawable\download.png" />
     <AndroidResource Include="Resources\drawable\download1.png" />
+    <AndroidResource Include="Resources\drawable\qrcode.jpg" />
   </ItemGroup>
   <Import Project="..\ZXingTest\ZXingTest.projitems" Label="Shared" Condition="Exists('..\ZXingTest\ZXingTest.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
